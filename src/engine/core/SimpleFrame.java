@@ -1,3 +1,7 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package src.engine.core;
 
 import java.awt.BorderLayout;
@@ -314,7 +318,7 @@ public final class SimpleFrame extends JFrame
             int index = 0;
             if (i < this.previousCells.length - 1 && this.previousCells[i + 1][j]) index++;
             if (j < this.previousCells[i].length - 1 && this.previousCells[i][j + 1]) index++;
-            if (i < this.previousCells.length - 1 && j < this.previousCells[0].length - 1 && this.previousCells[i + 1][j + 1]) index++;
+            if (i < this.previousCells.length - 1 && j < this.previousCells[i].length - 1 && this.previousCells[i + 1][j + 1]) index++;
             if (i > 0 && this.previousCells[i - 1][j]) index++;
             if (j > 0 && this.previousCells[i][j - 1]) index++;
             if (i > 0 && j > 0 && this.previousCells[i - 1][j - 1]) index++;

@@ -356,7 +356,7 @@ public final class SimpleFrame extends JFrame
                     for (int j = 0; j < SimpleComponent.this.previousCells[i].length; j++)
                     {
                         Rectangle2D b1 = new Rectangle2D.Float(i * SimpleComponent.CELL_SIZE, j * SimpleComponent.CELL_SIZE, SimpleComponent.CELL_SIZE, SimpleComponent.CELL_SIZE);
-                        Rectangle2D b2 = new Rectangle2D.Float((float) x, (float) y, 1.0F, 1.0F);
+                        Rectangle2D b2 = new Rectangle2D.Float(x, y, 1.0F, 1.0F);
                         if (b1.intersects(b2))
                         {
                             if (SimpleComponent.this.tool.equals(Tool.ADD_CELL))

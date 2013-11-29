@@ -1,3 +1,7 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package src.engine.core;
 
 import java.awt.BorderLayout;
@@ -165,7 +169,7 @@ public final class SimpleFrame extends JFrame
 
         public Tool tool = Tool.ADD_CELL;
 
-        private final boolean[][][] previousCells = new boolean[1000000][1000000][2];
+        private final boolean[][][] previousCells = new boolean[60][31][2];
 
         private volatile boolean running = false;
         
@@ -355,17 +359,20 @@ public final class SimpleFrame extends JFrame
                 {
                     for (int j = 0; j < SimpleComponent.this.previousCells[i].length; j++)
                     {
-                        Rectangle2D b1 = new Rectangle2D.Float(i * SimpleComponent.CELL_SIZE, j * SimpleComponent.CELL_SIZE, SimpleComponent.CELL_SIZE, SimpleComponent.CELL_SIZE);
-                        Rectangle2D b2 = new Rectangle2D.Float(x, y, 1.0F, 1.0F);
-                        if (b1.intersects(b2))
+                        if (!SimpleComponent.this.previousCells[i][j][0])
                         {
-                            if (SimpleComponent.this.tool.equals(Tool.ADD_CELL))
+                            Rectangle2D b1 = new Rectangle2D.Float(i * SimpleComponent.CELL_SIZE, j * SimpleComponent.CELL_SIZE, SimpleComponent.CELL_SIZE, SimpleComponent.CELL_SIZE);
+                            Rectangle2D b2 = new Rectangle2D.Float(x, y, 1.0F, 1.0F);
+                            if (b1.intersects(b2))
                             {
-                                SimpleComponent.this.previousCells[i][j][0] = true;
-                            }
-                            else if (SimpleComponent.this.tool.equals(Tool.REMOVE_CELL))
-                            {
-                                SimpleComponent.this.previousCells[i][j][0] = false;
+                                if (SimpleComponent.this.tool.equals(Tool.ADD_CELL))
+                                {
+                                    SimpleComponent.this.previousCells[i][j][0] = true;
+                                }
+                                else if (SimpleComponent.this.tool.equals(Tool.REMOVE_CELL))
+                                {
+                                    SimpleComponent.this.previousCells[i][j][0] = false;
+                                }
                             }
                         }
                     }

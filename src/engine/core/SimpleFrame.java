@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package src.engine.core;
 
 import java.awt.BorderLayout;
@@ -169,8 +165,7 @@ public final class SimpleFrame extends JFrame
 
         public Tool tool = Tool.ADD_CELL;
 
-        private final boolean[][] previousCells = new boolean[60][37];
-        private final boolean[][] nextCells = new boolean[60][37];
+        private final boolean[][][] previousCells = new boolean[1000000][1000000][2];
 
         private volatile boolean running = false;
         
@@ -228,7 +223,7 @@ public final class SimpleFrame extends JFrame
                 for (int j = 0; j < this.previousCells[i].length; j++)
                 {
                     int num = random.nextInt(coff);
-                    if (num == coff / 2) this.previousCells[i][j] = true;
+                    if (num == coff / 2) this.previousCells[i][j][0] = true;
                 }
             }
             this.repaint();
@@ -240,8 +235,8 @@ public final class SimpleFrame extends JFrame
             {
                 for (int j = 0; j < this.previousCells[i].length; j++)
                 {
-                    this.previousCells[i][j] = false;
-                    this.nextCells[i][j] = false;
+                    this.previousCells[i][j][0] = false;
+                    this.previousCells[i][j][1] = false;
                 }
             }
         }
@@ -250,19 +245,19 @@ public final class SimpleFrame extends JFrame
         {
             for (int i = 0; i < this.previousCells.length; i++)
             {
-                for (int j = 0; j < this.nextCells[i].length; j++)
+                for (int j = 0; j < this.previousCells[i].length; j++)
                 {
                     int index = this.getIndices(i, j);
-                    if (!this.previousCells[i][j] && index == 3) this.nextCells[i][j] = true;
-                    if (this.previousCells[i][j] && index == 2 || index == 3) this.nextCells[i][j] = true;
-                    if (this.previousCells[i][j] && index < 2 || index > 3) this.nextCells[i][j] = false;
+                    if (!this.previousCells[i][j][0] && index == 3) this.previousCells[i][j][1] = true;
+                    if (this.previousCells[i][j][0] && index == 2 || index == 3) this.previousCells[i][j][1] = true;
+                    if (this.previousCells[i][j][0] && index < 2 || index > 3) this.previousCells[i][j][1] = false;
                 }
             }
             for (int i = 0; i < this.previousCells.length; i++)
             {
                 for (int j = 0; j < this.previousCells[i].length; j++)
                 {
-                    this.previousCells[i][j] = this.nextCells[i][j];
+                    this.previousCells[i][j][0] = this.previousCells[i][j][1];
                 }
             }
         }
@@ -278,7 +273,7 @@ public final class SimpleFrame extends JFrame
                 {
                     int x = Integer.valueOf(line.split(" ")[2]);
                     int y = Integer.valueOf(line.split(" ")[5]);
-                    this.previousCells[x][y] = true;
+                    this.previousCells[x][y][0] = true;
                 }
                 in.close();
             }
@@ -302,7 +297,7 @@ public final class SimpleFrame extends JFrame
                 {
                     for (int j = 0; j < this.previousCells[i].length; j++)
                     {
-                        if (this.previousCells[i][j]) out.println("x = " + i + " y = " + j);
+                        if (this.previousCells[i][j][0]) out.println("x = " + i + " y = " + j);
                     }
                 }
                 out.close();
@@ -316,14 +311,14 @@ public final class SimpleFrame extends JFrame
         public int getIndices(int i, int j)
         {
             int index = 0;
-            if (i < this.previousCells.length - 1 && this.previousCells[i + 1][j]) index++;
-            if (j < this.previousCells[i].length - 1 && this.previousCells[i][j + 1]) index++;
-            if (i < this.previousCells.length - 1 && j < this.previousCells[i].length - 1 && this.previousCells[i + 1][j + 1]) index++;
-            if (i > 0 && this.previousCells[i - 1][j]) index++;
-            if (j > 0 && this.previousCells[i][j - 1]) index++;
-            if (i > 0 && j > 0 && this.previousCells[i - 1][j - 1]) index++;
-            if (i > 0 && j < this.previousCells[i].length - 1 && this.previousCells[i - 1][j + 1]) index++;
-            if (i < this.previousCells.length - 1 && j > 0 && this.previousCells[i + 1][j - 1]) index++;
+            if (i < this.previousCells.length - 1 && this.previousCells[i + 1][j][0]) index++;
+            if (j < this.previousCells[i].length - 1 && this.previousCells[i][j + 1][0]) index++;
+            if (i < this.previousCells.length - 1 && j < this.previousCells[i].length - 1 && this.previousCells[i + 1][j + 1][0]) index++;
+            if (i > 0 && this.previousCells[i - 1][j][0]) index++;
+            if (j > 0 && this.previousCells[i][j - 1][0]) index++;
+            if (i > 0 && j > 0 && this.previousCells[i - 1][j - 1][0]) index++;
+            if (i > 0 && j < this.previousCells[i].length - 1 && this.previousCells[i - 1][j + 1][0]) index++;
+            if (i < this.previousCells.length - 1 && j > 0 && this.previousCells[i + 1][j - 1][0]) index++;
             return index;
         }
 
@@ -335,9 +330,15 @@ public final class SimpleFrame extends JFrame
             {
                 for (int j = 0; j < this.previousCells[i].length; j++)
                 {
-                    if (this.previousCells[i][j]) g2.fillRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    if (this.previousCells[i][j][0])
+                    {
+                        g2.fillRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    }
                     g2.setColor(Color.LIGHT_GRAY);
-                    if (!this.previousCells[i][j]) g2.drawRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    if (!this.previousCells[i][j][0])
+                    {
+                        g2.drawRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    }
                     g2.setColor(Color.BLACK);
                 }
             }
@@ -360,11 +361,11 @@ public final class SimpleFrame extends JFrame
                         {
                             if (SimpleComponent.this.tool.equals(Tool.ADD_CELL))
                             {
-                                SimpleComponent.this.previousCells[i][j] = true;
+                                SimpleComponent.this.previousCells[i][j][0] = true;
                             }
                             else if (SimpleComponent.this.tool.equals(Tool.REMOVE_CELL))
                             {
-                                SimpleComponent.this.previousCells[i][j] = false;
+                                SimpleComponent.this.previousCells[i][j][0] = false;
                             }
                         }
                     }
